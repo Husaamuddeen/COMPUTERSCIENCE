@@ -10,10 +10,15 @@ def bubbleSort(unsortedlist):
         swap = 0
         #iterate through the loop, swapping an element with the element in front of it if it is larger
         for i in range(len(unsortedList)-1):
+            #check if the value of an index is greater than the value of the index above it
             if unsortedList[i]>unsortedList[i+1]:
+                #store the value of the index being written over
                 temporary = unsortedList[i]
+                #assign the value of the larger index to the smaller index
                 unsortedList[i] = unsortedList[i+1]
+                #assign the value of temporary to the larger index
                 unsortedList[i+1] = temporary
+                #indicate that a swap has occurred
                 swap = swap + 1
     return unsortedList
 
