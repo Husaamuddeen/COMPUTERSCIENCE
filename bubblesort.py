@@ -5,7 +5,8 @@ def bubbleSort(unsortedlist):
     #temporary variable to store the value of the element being written over
     temporary = 0
     swap = 1
-    #when no swaps happen in an iteration, the list is sorted, so the loop ends when there are no swaps
+    #when no swaps happen in an iteration, the list is sorted, 
+    # so the loop ends when there are no swaps
     while swap != 0:
         swap = 0
         #iterate through the loop, swapping an element with the element in front of it if it is larger
