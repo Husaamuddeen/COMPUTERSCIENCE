@@ -1,6 +1,6 @@
 #import the class for triangle objects
 from Triangle import Triangle
-
+import time
 import math, turtle
 
 
@@ -152,9 +152,9 @@ def drawtriangle(triangle):
         pencil = turtle.Turtle()
         pencil.penup()
         pencil.speed(6)
-        pencil.color("cyan")
+        pencil.color("#ffe985")
         pencil.width(3)
-        pencil.fillcolor("#ff00dd")
+        pencil.fillcolor("#85ffc2")
         pencil.goto(-200,-200)
         pencil.settiltangle(180)
         pencil.pendown()
@@ -197,7 +197,7 @@ def drawtriangle(triangle):
     def label(triangle, multiplier):
         label = turtle.Turtle()
         label.hideturtle()
-        label.pencolor("cyan")
+        label.pencolor("#85ffc2")
         label.penup()
         label.speed(20)
         label.goto(-200,-200)
@@ -227,7 +227,7 @@ def drawtriangle(triangle):
 
         #write the values of the triangle object in the output as well as the console
         label.penup()
-        label.goto(-300, 220)
+        label.goto(-300, 200)
         label.write(str("\n\nLength a    =   "+str(round(triangle.a,6))
                         +"\nLength b    =   "+str(round(triangle.b,6))
                         +"\nLength c    =   "+str(round(triangle.c,6))
@@ -272,3 +272,4 @@ while is_triangle_found == False:
         print("\n\nInvalid triangle ("+str(x)+")\n\n")
     except Exception as y:
         print("\n\nsomething went wrong mate\n\n"+str(y)+"\n\n")
+time.sleep(20)

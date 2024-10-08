@@ -17,6 +17,7 @@ def linearSearch(names,search):
         #check if the search is in the index of the list
         if search == names[count]:
             print('the name was found')
+            found = True
         #increment the index of the list
         count = count + 1
     if not found:
@@ -24,4 +25,4 @@ def linearSearch(names,search):
 
 #user enters the name to seach for
 search = input('Enter the name you are searching for: ')
-linearSearch(search,names)
+linearSearch(names,search)
