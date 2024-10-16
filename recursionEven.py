@@ -7,7 +7,9 @@ def addEvens(n):
 
 def calcSum(n):
     i = 1
-    while i < n:
-        i = 2*i + 1
-    return i
+    sum = 0
+    while i <= n:
+        sum = sum + i
+        i = i + 1
+    return sum
 print(calcSum(40))
