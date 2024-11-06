@@ -1,11 +1,11 @@
 class Triangle:
-    def __init__(self, a, b, c, A, B, C, area, perimeter):
-        self.a = a
-        self.b = b
-        self.c = c
-        self.A = A
-        self.B = B
-        self.C = C
+    def __init__(self, sidea, sideb, sidec, angleA, angleB, angleC, area, perimeter):
+        self.a = sidea
+        self.b = sideb
+        self.c = sidec
+        self.A = angleA
+        self.B = angleB
+        self.C = angleC
         self.area = area
         self.perimeter = perimeter
     def print_values(triangle):
