@@ -12,10 +12,12 @@ class Bank:
         self.__accounts = []
 
     def addAccount(self, newAccount):
-        __accounts.append(newAccount)
+        self.__accounts.append(newAccount)
 
     def findAccount(self, idSearch):
-        for i in range len(__accounts)
+        for i in range len(self.__accounts)
+            if idSearch == self.__accounts[i].getID():
+                self.__accounts[i].displayInfo()
 
 class BankAccount:
     __name = ""
@@ -30,10 +32,14 @@ class BankAccount:
         self.__balance = self.__balance + amount
     
     def withdraw(self, amount):
-        self.__balance = self.__balance + amount
+        self.__balance = self.__balance - amount
 
     def displayInfo(self):
         print("name: "+self.__name)
         print("id: "+str(self.__id))
         print("balance: "+str(self.__balance))
     
+    def getID(self):
+        return self.__id
+    
+HusaamsBank = Bank("Husaam's Bank")

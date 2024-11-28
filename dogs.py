@@ -38,3 +38,4 @@ myDog1 = Dog("Eesa eater","Red")
 print("Hello "+myDog1.getName()+", you are a "+myDog1.getColour()+" colour.")
 #use the bark method to print woof 10 times
 myDog1.bark(10)
+print(myDog1)
