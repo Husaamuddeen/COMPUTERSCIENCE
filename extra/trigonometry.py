@@ -1,5 +1,5 @@
 #import the class for triangle objects
-from Triangle import Triangle
+from extra.Triangle import Triangle
 import time
 import math, turtle
 
