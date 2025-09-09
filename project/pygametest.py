@@ -1,18 +1,26 @@
 import pygame
 from sys import exit
-# hello
+
 #initialise pygame screen
 pygame.init()
-screen = pygame.display.set_mode((1000,1000))
+screen = pygame.display.set_mode((1200,800))
 pygame.display.set_caption('graphs')
 clock = pygame.time.Clock()
 
 #set default font
 font = pygame.font.Font(None,50)
-
-desktop = pygame.image.load('project/images/desktop.png').convert()
-text = font.render('mathsmathsmathsmathsmathsmathsmathsmathsmathsmaths', False, 'black')
-
+a = int(input('enter a: '))
+b = int(input('enter b: '))
+c = int(input('enter c: '))
+if a >= b:
+    if a >= c:
+        longest = a
+    else:
+        longest = c
+else:
+    if b >= c:
+        longest = b
+        
 
 button = pygame.Surface(((100,100)))
 button.fill('Blue')
@@ -26,8 +34,6 @@ while True:
             exit()
 
     #update surfaces
-    screen.blit(desktop,(0,0))
-    screen.blit(text,(0,500))
     screen.blit(button,buttonrec)
 
     #check for mouse collisions and mouse presses
