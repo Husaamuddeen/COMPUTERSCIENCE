@@ -1,6 +1,6 @@
 import pygame
 from sys import exit
-
+# hello
 #initialise pygame screen
 pygame.init()
 screen = pygame.display.set_mode((1000,1000))
