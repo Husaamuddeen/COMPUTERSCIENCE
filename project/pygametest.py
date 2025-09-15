@@ -50,36 +50,39 @@ def constructTriangle():
         line_a = 0
         pygame.display.flip()
         longest = b
-    
 
-#constructTriangle()
+class Button:
+    def __init__(self, _height, _width, _colour, _centre):
+        self.height = _height
+        self.width = _width
+        self.colour = _colour
+        self.centre = _centre
+        self.surface = pygame.Surface((self.width,self.height))
+        self.surface.fill(self.colour)
+        self.rect = self.surface.get_rect(center = self.centre)
 
-
-button = pygame.Surface(((100,100)))
-button.fill('Blue')
-buttonrec = button.get_rect(center = (50,50))
-print(buttonrec)
 #main animation loop
-count = 0
-def mainMenu
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
+def mainMenu():
+    screen.fill('black')
 
-    #update surfaces
-    count += 1
-    if count < 100:
-        screen.blit(button,buttonrec)
-    else:
-        screen.fill('black')
-        print('gone')
-    #check for mouse collisions and mouse presses
-    mouse_pos = pygame.mouse.get_pos()
-    if buttonrec.collidepoint((mouse_pos)):
-        if pygame.mouse.get_pressed()[0]:
-            print('maths')
+    button1 = Button(100,300,'blue',(400,200))
 
-    pygame.display.update()
-    clock.tick(60)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+        #update surfaces
+        screen.blit(button1.surface,button1.rect)
+
+        #check for mouse collisions and mouse presses
+        mouse_pos = pygame.mouse.get_pos()
+        if button1.rect.collidepoint((mouse_pos)):
+            if pygame.mouse.get_pressed()[0]:
+                print('maths')
+
+        pygame.display.update()
+        clock.tick(60)
+
+mainMenu()
