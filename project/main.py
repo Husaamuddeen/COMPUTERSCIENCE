@@ -3,14 +3,22 @@ from sys import exit
 import time
 
 class InputBox:
-    def __init__(self, _centre,_text):
+    def __init__(self, _centre,_contents):
         self.centre = _centre
-        self.text = _text
+        self.contents = _contents
+        self.text = font.render(self.contents,False,'white')
         self.selected = False
         self.surface = pygame.image.load('project\images\inputBox.png')
         self.rect = self.surface.get_rect(center = self.centre)
-    def type(self,_character):
-        self.text = self.text + _character
+    def add(self,_character):
+        self.contents = self.contents + _character
+        self.text = font.render(self.contents,False,'white')
+    def delete(self):
+        self.surface.fill('black')
+        screen.blit(self.surface,self.rect)
+        self.surface = pygame.image.load('project\images\inputBox.png')
+        self.contents = self.contents[:len(self.contents)-2]
+        self.text = font.render(self.contents,False,'white')
 
 #class to hold all the data about a triangle: sides, angles, area, perimeter
 class Triangle:
@@ -145,7 +153,7 @@ def triangle():
         mouse_pos = pygame.mouse.get_pos()
         for i in range(len(buttons)):
             screen.blit(buttons[i].surface, buttons[i].rect)
-            if buttons[i].rect.collidepoint((mouse_pos)):
+            if buttons[i].rect.collidepoint(mouse_pos):
                 if pygame.mouse.get_pressed()[0]:
                     match i:
                         case 0:
@@ -156,6 +164,50 @@ def triangle():
                             print('saves')
         for i in range(len(inputBoxes)):
             screen.blit(inputBoxes[i].surface,inputBoxes[i].rect)
+            screen.blit(inputBoxes[i].text,inputBoxes[i].rect)
+            if inputBoxes[i].selected:
+                if not inputBoxes[i].rect.collidepoint(mouse_pos):
+                    if pygame.mouse.get_pressed()[0]:
+                        inputBoxes[i].selected = False
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_0]:
+                    inputBoxes[i].add('0')
+                    print('0')
+                if keys[pygame.K_1]:
+                    inputBoxes[i].add('1')
+                if keys[pygame.K_2]:
+                    inputBoxes[i].add('2')
+                if keys[pygame.K_3]:
+                    inputBoxes[i].add('3')
+                if keys[pygame.K_4]:
+                    inputBoxes[i].add('4')
+                if keys[pygame.K_5]:
+                    inputBoxes[i].add('5')
+                if keys[pygame.K_6]:
+                    inputBoxes[i].add('6')
+                if keys[pygame.K_7]:
+                    inputBoxes[i].add('7')
+                if keys[pygame.K_8]:
+                    inputBoxes[i].add('8')
+                if keys[pygame.K_9]:
+                    inputBoxes[i].add('9')
+                if keys[pygame.K_PLUS]:
+                    inputBoxes[i].add('+')
+                if keys[pygame.K_MINUS]:
+                    inputBoxes[i].add('-')
+                if keys[pygame.K_ASTERISK]:
+                    inputBoxes[i].add('*')
+                if keys[pygame.K_SLASH]:
+                    inputBoxes[i].add('/')
+                if keys[pygame.K_BACKSPACE]:
+                    inputBoxes[i].delete()
+                #if keys in ['0','1','2','3','4','5','6','7','8','9','.','-','+','*','/','^']:
+
+
+            else:
+                if inputBoxes[i].rect.collidepoint(mouse_pos):
+                    if pygame.mouse.get_pressed()[0]:
+                        inputBoxes[i].selected = True
 
 
         pygame.display.update()
