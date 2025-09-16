@@ -3,17 +3,14 @@ from sys import exit
 import time
 
 class InputBox:
-    def __init__(self, inHeight, inWidth, inColour):
-        self.height = height
-        self.width = width
-        self.colour = colour
-        
-
-    def move(self):
-        mouse_pos = pygame.mouse.get_pos()
-        if buttonrec.collidepoint((mouse_pos)):
-            if pygame.mouse.get_pressed()[0]:
-                print('maths')
+    def __init__(self, _centre,_text):
+        self.centre = _centre
+        self.text = _text
+        self.selected = False
+        self.surface = pygame.image.load('project\images\inputBox.png')
+        self.rect = self.surface.get_rect(center = self.centre)
+    def type(self,_character):
+        self.text = self.text + _character
 
 #class to hold all the data about a triangle: sides, angles, area, perimeter
 class Triangle:
@@ -80,8 +77,6 @@ def mainMenu():
                 exit()
 
         #update surfaces
-        screen.blit(buttons[0].surface, buttons[0].rect)
-
         #check for mouse collisions and mouse presses
         mouse_pos = pygame.mouse.get_pos()
         for i in range(len(buttons)):
@@ -94,7 +89,7 @@ def mainMenu():
                         case 1:
                             modules()
                         case 2:
-                            print('settings')
+                            print('saves')
 
         pygame.display.update()
         clock.tick(60)
@@ -117,7 +112,34 @@ def modules():
                 exit()
 
         #update surfaces
-        screen.blit(buttons[0].surface, buttons[0].rect)
+        #check for mouse collisions and mouse presses
+        mouse_pos = pygame.mouse.get_pos()
+        for i in range(len(buttons)):
+            screen.blit(buttons[i].surface, buttons[i].rect)
+            if buttons[i].rect.collidepoint((mouse_pos)):
+                if pygame.mouse.get_pressed()[0]:
+                    match i:
+                        case 0:
+                            triangle()
+                        case 1:
+                            print('modules')
+                        case 9:
+                            mainMenu()
+
+        pygame.display.update()
+        clock.tick(60)
+
+def triangle():
+    screen.fill('black')
+    pygame.draw.line(screen,'cyan',(800,0),(800,800))
+
+    buttons= []
+    inputBoxes = [InputBox((900,200),'00')]
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
 
         #check for mouse collisions and mouse presses
         mouse_pos = pygame.mouse.get_pos()
@@ -129,9 +151,12 @@ def modules():
                         case 0:
                             print('options')
                         case 1:
-                            print('modules')
-                        case 9:
-                            mainMenu()
+                            modules()
+                        case 2:
+                            print('saves')
+        for i in range(len(inputBoxes)):
+            screen.blit(inputBoxes[i].surface,inputBoxes[i].rect)
+
 
         pygame.display.update()
         clock.tick(60)
