@@ -70,7 +70,8 @@ class Image:
 #main animation loop
 def mainMenu():
     screen.fill('black')
-    buttons = [Image('project\\images\options.png',(500,400)),Image('project\\images\modules.png',(600,400)),Image('project\\images\saves.png',(700,400))]
+    buttons = [Image('project/images/options.png',(500,400)),Image('project/images/modules.png',(600,400)),Image('project/images/saves.png',(700,400))]
+    #buttons = [Image('project\\images\options.png',(500,400)),Image('project\\images\modules.png',(600,400)),Image('project\\images\saves.png',(700,400))]
 
     while True:
         for event in pygame.event.get():
@@ -100,10 +101,14 @@ def mainMenu():
 
 def modules():
     screen.fill('black')
+    #buttons = [Button(100,250,'yellow',(300,200)),Button(100,250,'yellow',(600,200)),Button(100,250,'yellow',(900,200)),
+    #           Button(100,250,'yellow',(300,400)),Button(100,250,'yellow',(600,400)),Button(100,250,'yellow',(900,400)),
+    #           Button(100,250,'yellow',(300,600)),Button(100,250,'yellow',(600,600)),Button(100,250,'yellow',(900,600)),
+    #           Image('project\\images\\back.png',(1000,700))]
     buttons = [Button(100,250,'yellow',(300,200)),Button(100,250,'yellow',(600,200)),Button(100,250,'yellow',(900,200)),
                Button(100,250,'yellow',(300,400)),Button(100,250,'yellow',(600,400)),Button(100,250,'yellow',(900,400)),
                Button(100,250,'yellow',(300,600)),Button(100,250,'yellow',(600,600)),Button(100,250,'yellow',(900,600)),
-               Image('project\\images\\back.png',(1000,700))]
+               Image('project/images/back.png',(1000,700))]
 
     while True:
         for event in pygame.event.get():
@@ -126,7 +131,7 @@ def modules():
                         case 1:
                             print('modules')
                         case 9:
-                            mainMenu():
+                            mainMenu()
 
         pygame.display.update()
         clock.tick(60)
