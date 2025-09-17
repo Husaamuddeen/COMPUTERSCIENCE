@@ -7,6 +7,7 @@ class InputBox:
     def __init__(self, _centre,_contents):
         self.centre = _centre
         self.contents = _contents
+        self.interpretedContents = 0
         self.text = font.render(self.contents,False,'white')
         self.selected = False
         self.locked = False
@@ -37,7 +38,28 @@ class InputBox:
             self.contents = self.contents[:len(self.contents)-1]
             self.text = font.render(self.contents,False,'white')
 
-    def getContents()
+    def calculate(self):
+        first = True
+        num1 = '0'
+        operator = ''
+        num2 = '0'
+        for i in range(len(self.contents)):
+            if self.contents[i] in ['0','1','2','3','4','5','6','7','8','9']:
+                if first:
+                    num1 = num1 + self.contents[i]
+                else:
+                    num2 = num2 + self.contents[i]
+            elif self.contents[i] in operators:
+                operator = self.contents[i]
+                first = False
+        if (not int(num2) == 0 and not num2 == '') and (not int(num1) == 0 and not num1 == ''):
+            self.interpretedContents = operators[operator](int(num1),int(num2))
+            self.contents = str(round(self.interpretedContents,4))
+            self.surface.fill('black')
+            screen.blit(self.surface,self.rect)
+            self.surface = pygame.image.load('project\images\inputBox.png')
+            self.text = font.render(self.contents,False,'white')
+
 
 #class to hold all the data about a triangle: sides, angles, area, perimeter
 class Triangle:
@@ -59,21 +81,13 @@ clock = pygame.time.Clock()
 
 #set default font
 font = pygame.font.Font(None,50)
-pygame.draw.line(screen,'blue',(800,0),(800,800))
-#pygame.draw.line(screen,'white',(0,400),(800,400))
-#pygame.draw.line(screen,'white',(400,0),(400,800))
 
-def constructTriangle():
-    a = 3
-    longest = a
-    workingTriangle = Triangle(a,None,None,None,None,None,None,None)
-    scale = 600/a
-    line_a = pygame.draw.line(screen, 'white', (50,550), (50+scale*a,550))
-    b = int(input(': '))
-    if b > longest:
-        line_a = 0
-        pygame.display.flip()
-        longest = b
+operators = {'+': operator.add,
+             '-': operator.sub,
+             '/': operator.truediv,
+             '*': operator.mul}
+
+
 
 class Button:
     def __init__(self, _height, _width, _colour, _centre):
@@ -240,7 +254,9 @@ def triangle():
                     if keys[pygame.K_BACKSPACE]:
                         inputBoxes[i].delete()
                         inputBoxes[i].locked = True
-                #if keys in ['0','1','2','3','4','5','6','7','8','9','.','-','+','*','/','^']:
+                    if keys[pygame.K_RETURN]:
+                        inputBoxes[i].calculate()
+                        inputBoxes[i].locked = True
 
 
             else:
