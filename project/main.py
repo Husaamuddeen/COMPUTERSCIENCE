@@ -1,4 +1,5 @@
 import pygame
+import operator
 from sys import exit
 import time
 
@@ -8,17 +9,35 @@ class InputBox:
         self.contents = _contents
         self.text = font.render(self.contents,False,'white')
         self.selected = False
+        self.locked = False
+        self.timer = 0
+        self.full = False
+        self.height = 0
+        self.width = 0
         self.surface = pygame.image.load('project\images\inputBox.png')
         self.rect = self.surface.get_rect(center = self.centre)
+
+    #method to add a character to the user input
     def add(self,_character):
-        self.contents = self.contents + _character
-        self.text = font.render(self.contents,False,'white')
+        if not self.locked and not self.full:
+            self.height, self.width = font.size(self.contents+ _character)
+            if self.height < 150:
+                self.contents = self.contents + _character
+                self.text = font.render(self.contents,False,'white')
+            else:
+                self.full = True
+
+    #method to delete the last character from the input box
     def delete(self):
-        self.surface.fill('black')
-        screen.blit(self.surface,self.rect)
-        self.surface = pygame.image.load('project\images\inputBox.png')
-        self.contents = self.contents[:len(self.contents)-2]
-        self.text = font.render(self.contents,False,'white')
+        if not self.locked:
+            self.full = False
+            self.surface.fill('black')
+            screen.blit(self.surface,self.rect)
+            self.surface = pygame.image.load('project\images\inputBox.png')
+            self.contents = self.contents[:len(self.contents)-1]
+            self.text = font.render(self.contents,False,'white')
+
+    def getContents()
 
 #class to hold all the data about a triangle: sides, angles, area, perimeter
 class Triangle:
@@ -166,41 +185,61 @@ def triangle():
             screen.blit(inputBoxes[i].surface,inputBoxes[i].rect)
             screen.blit(inputBoxes[i].text,inputBoxes[i].rect)
             if inputBoxes[i].selected:
-                if not inputBoxes[i].rect.collidepoint(mouse_pos):
-                    if pygame.mouse.get_pressed()[0]:
-                        inputBoxes[i].selected = False
-                keys = pygame.key.get_pressed()
-                if keys[pygame.K_0]:
-                    inputBoxes[i].add('0')
-                    print('0')
-                if keys[pygame.K_1]:
-                    inputBoxes[i].add('1')
-                if keys[pygame.K_2]:
-                    inputBoxes[i].add('2')
-                if keys[pygame.K_3]:
-                    inputBoxes[i].add('3')
-                if keys[pygame.K_4]:
-                    inputBoxes[i].add('4')
-                if keys[pygame.K_5]:
-                    inputBoxes[i].add('5')
-                if keys[pygame.K_6]:
-                    inputBoxes[i].add('6')
-                if keys[pygame.K_7]:
-                    inputBoxes[i].add('7')
-                if keys[pygame.K_8]:
-                    inputBoxes[i].add('8')
-                if keys[pygame.K_9]:
-                    inputBoxes[i].add('9')
-                if keys[pygame.K_PLUS]:
-                    inputBoxes[i].add('+')
-                if keys[pygame.K_MINUS]:
-                    inputBoxes[i].add('-')
-                if keys[pygame.K_ASTERISK]:
-                    inputBoxes[i].add('*')
-                if keys[pygame.K_SLASH]:
-                    inputBoxes[i].add('/')
-                if keys[pygame.K_BACKSPACE]:
-                    inputBoxes[i].delete()
+                if inputBoxes[i].locked:
+                    inputBoxes[i].timer += 1
+                    if inputBoxes[i].timer == 10:
+                        inputBoxes[i].timer = 0
+                        inputBoxes[i].locked = False
+                else:
+                    if not inputBoxes[i].rect.collidepoint(mouse_pos):
+                        if pygame.mouse.get_pressed()[0]:
+                            inputBoxes[i].selected = False
+                    keys = pygame.key.get_pressed()
+                    if keys[pygame.K_0]:
+                        inputBoxes[i].add('0')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_1]:
+                        inputBoxes[i].add('1')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_2]:
+                        inputBoxes[i].add('2')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_3]:
+                        inputBoxes[i].add('3')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_4]:
+                        inputBoxes[i].add('4')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_5]:
+                        inputBoxes[i].add('5')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_6]:
+                        inputBoxes[i].add('6')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_7]:
+                        inputBoxes[i].add('7')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_8]:
+                        inputBoxes[i].add('8')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_9]:
+                        inputBoxes[i].add('9')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_PLUS]:
+                        inputBoxes[i].add('+')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_MINUS]:
+                        inputBoxes[i].add('-')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_ASTERISK]:
+                        inputBoxes[i].add('*')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_SLASH]:
+                        inputBoxes[i].add('/')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_BACKSPACE]:
+                        inputBoxes[i].delete()
+                        inputBoxes[i].locked = True
                 #if keys in ['0','1','2','3','4','5','6','7','8','9','.','-','+','*','/','^']:
 
 
