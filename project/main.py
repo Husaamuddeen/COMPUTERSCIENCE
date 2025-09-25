@@ -94,6 +94,8 @@ class InputBox:
             elif self.contents[i] in operators:
                 operator = self.contents[i]
                 first = False
+        if first:
+            self.interpretedContents = int(num1)
         #once the prompt has been separated, check that the input is actaully an arithmetic prompt consisting of two numbers
         if (not int(num2) == 0 and not num2 == '') and (not int(num1) == 0 and not num1 == ''):
             #perform the arithmetic operation and store to interpretedContents
@@ -223,7 +225,8 @@ def triangle():
                 if pygame.mouse.get_pressed()[0]:
                     match i:
                         case 0:
-                            '''getTriangle()'''
+                            triangle = Triangle(inputBoxes[0],inputBoxes[1],inputBoxes[2],inputBoxes[3],inputBoxes[4],inputBoxes[5],inputBoxes[6],inputBoxes[7])
+                            line, progress = drawTriangle(inputBoxes,triangle,line,progress)
                             print('h')
                         case 1:
                             modules()
@@ -292,18 +295,27 @@ def triangle():
                         inputBoxes[i].calculate()
                         inputBoxes[i].locked = True
 
-
             else:
                 if inputBoxes[i].rect.collidepoint(mouse_pos):
                     if pygame.mouse.get_pressed()[0]:
                         inputBoxes[i].selected = True
 
-
         pygame.display.update()
         clock.tick(60)
 
-def getTriangle(inputBoxes):
-    triangle = Triangle(inputBoxes[0],inputBoxes[1],inputBoxes[2],inputBoxes[3],inputBoxes[4],inputBoxes[5],inputBoxes[6],inputBoxes[7])
+def drawTriangle(inputBoxes,triangle,line,progress):
+    longest = 0
+    for i in range(0,3):
+        print(inputBoxes[i].interpretedContents)
+        if inputBoxes[i].interpretedContents > longest:
+            longest = inputBoxes[i].interpretedContents
+    print(longest)
+    scale = longest/600
+    if scale != 0:
+        print('draw')
+        for i in range(0,3):
+            pygame.draw.line(screen,'cyan',(100,600),(100+progresslongest/scale,600))
+    return line,progress
 
 #function to find a missing length (a)
 def length(a,b,c,A,B,C):
@@ -363,6 +375,5 @@ def length(a,b,c,A,B,C):
                     b = factors[x]
     #return the value of length a
     return a
-
 
 mainMenu()
