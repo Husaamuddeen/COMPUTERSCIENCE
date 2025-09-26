@@ -110,9 +110,9 @@ class InputBox:
 #class to hold all the data about a triangle: sides, angles, area, perimeter
 class Triangle:
     def __init__(self, _a, _b, _c, _A, _B, _C, _area, _perimeter):
-        self.a = _a
-        self.b = _b
-        self.c = _c
+        self.a = Line(_a.interpretedContents)
+        self.b = Line(_b.interpretedContents)
+        self.c = Line(_c.interpretedContents)
         self.A = _A
         self.B = _B
         self.C = _C
@@ -142,6 +142,31 @@ class Image:
         #initialising a pygame surface and rectangle for the button
         self.surface = pygame.image.load(_path)
         self.rect = self.surface.get_rect(center = self.centre)
+
+#class to store the values of a line in a triangle
+class Line:
+    def __init__(self,_length):
+        self.length = _length
+        self.angle = 0
+        self.scale = 0
+        self.surface = None
+
+    def drawLine(self,scale,progress):
+        if self.surface == None:
+            self.surface = pygame.Surface((1,1))
+        self.surface = pygame.Surface((self.length*scale*progress,1))
+        self.rect = self.surface.get_rect(center = (400,400))
+        self.surface.fill('white')
+        screen.blit(self.surface,self.rect)
+        progress = progress + 0.01
+        return progress
+
+'''    def moveLine(self,position,progress):
+        self.surface.fill('black')
+        position[0] = position[0]+
+        screen.blit(self.surface,)'''
+
+
 
 #procedure to display the main menu
 def mainMenu():
@@ -225,13 +250,24 @@ def triangle():
                 if pygame.mouse.get_pressed()[0]:
                     match i:
                         case 0:
-                            triangle = Triangle(inputBoxes[0],inputBoxes[1],inputBoxes[2],inputBoxes[3],inputBoxes[4],inputBoxes[5],inputBoxes[6],inputBoxes[7])
-                            line, progress = drawTriangle(inputBoxes,triangle,line,progress)
-                            print('h')
-                        case 1:
-                            modules()
-                        case 2:
-                            print('saves')
+                            data = [False,False,False,False,False,False,False,False]
+                            values = 0
+                            for i in range(len(inputBoxes)):
+                                if inputBoxes[i].interpretedContents != 0:
+                                    data[i] = True
+                            for i in range(0,3):
+                                if data[i]:
+                                    values = values + 1
+                            if values == 3:
+                                drawTriangle(inputBoxes,buttons,triangle)
+                            elif values == 2:
+                                if data[7]:
+                                    drawTriangle(inputBoxes,buttons,triangle)
+                                for i in range(0,3):
+                                    if data[i] and data[i+3]:
+                                        drawTriangle(inputBoxes,buttons,triangle)
+                                    
+
         for i in range(len(inputBoxes)):
             screen.blit(inputBoxes[i].surface,inputBoxes[i].rect)
             screen.blit(inputBoxes[i].text,inputBoxes[i].rect)
@@ -241,6 +277,7 @@ def triangle():
                     if inputBoxes[i].timer == 10:
                         inputBoxes[i].timer = 0
                         inputBoxes[i].locked = False
+                #check for numerical and arithmetic key entries
                 else:
                     if not inputBoxes[i].rect.collidepoint(mouse_pos):
                         if pygame.mouse.get_pressed()[0]:
@@ -303,19 +340,38 @@ def triangle():
         pygame.display.update()
         clock.tick(60)
 
-def drawTriangle(inputBoxes,triangle,line,progress):
-    longest = 0
-    for i in range(0,3):
-        print(inputBoxes[i].interpretedContents)
-        if inputBoxes[i].interpretedContents > longest:
-            longest = inputBoxes[i].interpretedContents
-    print(longest)
-    scale = longest/600
-    if scale != 0:
-        print('draw')
-        for i in range(0,3):
-            pygame.draw.line(screen,'cyan',(100,600),(100+progresslongest/scale,600))
-    return line,progress
+#function to draw a trianlge to the screen
+def drawTriangle(inputBoxes,buttons,triangle,):
+    newCanvas = pygame.Surface((798,798))
+    newCanvasRect = newCanvas.get_rect(center = (400,400))
+    screen.blit(newCanvas,newCanvasRect)
+    triangle = Triangle(inputBoxes[0],inputBoxes[1],inputBoxes[2],inputBoxes[3],inputBoxes[4],inputBoxes[5],inputBoxes[6],inputBoxes[7])
+    lineNum = 1
+    progress = 0
+    drawn = False
+    positioned = False
+    scale = 600/triangle.a.length
+    print(f'scale: {scale}')
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+        match lineNum:
+            case 1:
+                if not drawn:
+                    print(progress)
+                    progress = triangle.a.drawLine(scale,progress)
+                    if progress > 1:
+                        drawn = True
+                elif not positioned:
+                    progress = 0
+
+
+        pygame.display.update()
+        clock.tick(60)
+
+    
 
 #function to find a missing length (a)
 def length(a,b,c,A,B,C):
