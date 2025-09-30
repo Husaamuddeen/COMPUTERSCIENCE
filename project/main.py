@@ -148,16 +148,15 @@ class Line:
     def __init__(self,_length):
         self.length = _length
         self.angle = 0
-        self.scale = 0
         self.surface = None
+        self.position = (100,400)
 
     def drawLine(self,scale,progress):
         if self.surface == None:
             self.surface = pygame.Surface((1,1))
         self.surface = pygame.Surface((self.length*scale*progress,1))
-        self.rect = self.surface.get_rect(center = (400,400))
         self.surface.fill('white')
-        screen.blit(self.surface,self.rect)
+        screen.blit(self.surface,self.position)
         progress = progress + 0.01
         return progress
 
@@ -264,7 +263,7 @@ def triangle():
                                 if data[7]:
                                     drawTriangle(inputBoxes,buttons,triangle)
                                 for i in range(0,3):
-                                    if data[i] and data[i+3]:
+                                    if not data[i] and data[i+3]:
                                         drawTriangle(inputBoxes,buttons,triangle)
                                     
 
