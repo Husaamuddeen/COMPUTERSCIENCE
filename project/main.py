@@ -159,11 +159,15 @@ class Line:
         screen.blit(self.surface,self.position)
         progress = progress + 0.01
         return progress
-
-'''    def moveLine(self,position,progress):
+    
+    def moveLine(self,end,progress):
         self.surface.fill('black')
-        position[0] = position[0]+
-        screen.blit(self.surface,)'''
+        screen.blit(self.surface,self.position)
+        self.position[0] = self.position[0]+0.01(end[0]-self.position[0])
+        self.position[0] = self.position[0]+0.01(end[0]-self.position[0])
+        progress = progress + 0.01
+        screen.blit(self.surface,self.position)
+        return progress
 
 
 
@@ -363,8 +367,13 @@ def drawTriangle(inputBoxes,buttons,triangle,):
                     progress = triangle.a.drawLine(scale,progress)
                     if progress > 1:
                         drawn = True
+                        progress = 0
                 elif not positioned:
-                    progress = 0
+                    print(progress)
+                    progress = triangle.a.moveLine(100,200)
+                    if progress > 1:
+                        positioned = True
+                        progress = 0
 
 
         pygame.display.update()
