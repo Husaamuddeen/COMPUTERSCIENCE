@@ -12,6 +12,7 @@ clock = pygame.time.Clock()
 
 #set default font
 font = pygame.font.Font(None,50)
+small_font = pygame.font.Font(None,20)
 
 operators = {'+': operator.add,
              '-': operator.sub,
@@ -82,6 +83,11 @@ class InputBox:
         num1 = '0'
         operator = ''
         num2 = '0'
+        negative = False
+        if self.contents[0] == '-':
+            negative = True
+            self.contents = self.contents[1:len(self.contents)]
+
         #for loop to separate the contents of the input box into the arithmetic prompt
         for i in range(len(self.contents)):
             #if the character is a number, add it to either the first or second number
@@ -100,6 +106,8 @@ class InputBox:
         if (not int(num2) == 0 and not num2 == '') and (not int(num1) == 0 and not num1 == ''):
             #perform the arithmetic operation and store to interpretedContents
             self.interpretedContents = operators[operator](int(num1),int(num2))
+            if negative:
+                self.interpretedContents = (0-self.interpretedContents)
             #update the contents of the input box, clear the box and update the surface and text
             self.contents = str(round(self.interpretedContents,4))
             self.surface.fill('black')
@@ -149,7 +157,7 @@ class Line:
         self.length = _length
         self.angle = 0
         self.surface = None
-        self.position = (100,400)
+        self.position = [100,400]
 
     def drawLine(self,scale,progress):
         if self.surface == None:
@@ -157,19 +165,27 @@ class Line:
         self.surface = pygame.Surface((self.length*scale*progress,1))
         self.surface.fill('white')
         screen.blit(self.surface,self.position)
-        progress = progress + 0.01
+        progress = progress + 0.02
         return progress
     
     def moveLine(self,end,progress):
         self.surface.fill('black')
         screen.blit(self.surface,self.position)
-        self.position[0] = self.position[0]+0.01(end[0]-self.position[0])
-        self.position[0] = self.position[0]+0.01(end[0]-self.position[0])
-        progress = progress + 0.01
+        self.position[0] = self.position[0]+ 0.02*(end[0]-100)
+        self.position[1] = self.position[1]+ 0.02*(end[1]-400)
+        progress = progress + 0.02
+        self.surface.fill('white')
         screen.blit(self.surface,self.position)
         return progress
 
-
+#class to store the values of a polynomial
+class Polynomial:
+    def __init__(self, _a, _b, _c, _d, _e):
+        self.a = _a
+        self.b = _b
+        self.c = _c
+        self.d = _d
+        self.e = _e
 
 #procedure to display the main menu
 def mainMenu():
@@ -226,13 +242,14 @@ def modules():
                         case 0:
                             triangle()
                         case 1:
-                            print('modules')
+                            polynomial()
                         case 9:
                             mainMenu()
 
         pygame.display.update()
         clock.tick(60)
 
+#function to take inputs for triangles
 def triangle():
     screen.fill('black')
     pygame.draw.line(screen,'cyan',(800,0),(800,800))
@@ -262,13 +279,13 @@ def triangle():
                                 if data[i]:
                                     values = values + 1
                             if values == 3:
-                                drawTriangle(inputBoxes,buttons,triangle)
+                                drawTriangle(inputBoxes)
                             elif values == 2:
                                 if data[7]:
-                                    drawTriangle(inputBoxes,buttons,triangle)
+                                    drawTriangle(inputBoxes)
                                 for i in range(0,3):
                                     if not data[i] and data[i+3]:
-                                        drawTriangle(inputBoxes,buttons,triangle)
+                                        drawTriangle(inputBoxes)
                                     
 
         for i in range(len(inputBoxes)):
@@ -344,7 +361,7 @@ def triangle():
         clock.tick(60)
 
 #function to draw a trianlge to the screen
-def drawTriangle(inputBoxes,buttons,triangle,):
+def drawTriangle(inputBoxes):
     newCanvas = pygame.Surface((798,798))
     newCanvasRect = newCanvas.get_rect(center = (400,400))
     screen.blit(newCanvas,newCanvasRect)
@@ -355,7 +372,7 @@ def drawTriangle(inputBoxes,buttons,triangle,):
     positioned = False
     scale = 600/triangle.a.length
     print(f'scale: {scale}')
-    while True:
+    while not drawn and not positioned:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -370,7 +387,7 @@ def drawTriangle(inputBoxes,buttons,triangle,):
                         progress = 0
                 elif not positioned:
                     print(progress)
-                    progress = triangle.a.moveLine(100,200)
+                    progress = triangle.a.moveLine([100,600],progress)
                     if progress > 1:
                         positioned = True
                         progress = 0
@@ -378,8 +395,6 @@ def drawTriangle(inputBoxes,buttons,triangle,):
 
         pygame.display.update()
         clock.tick(60)
-
-    
 
 #function to find a missing length (a)
 def length(a,b,c,A,B,C):
@@ -439,5 +454,138 @@ def length(a,b,c,A,B,C):
                     b = factors[x]
     #return the value of length a
     return a
+
+#function to take inputs for a polynomial
+def polynomial():
+    screen.fill('black')
+    pygame.draw.line(screen,'cyan',(800,0),(800,800))
+    pygame.draw.line(screen,'white',(400,0),(400,800))
+    pygame.draw.line(screen,'white',(0,400),(800,400))
+    x = font.render('x',False,'white')
+    powers = [small_font.render('4',False,'white'),small_font.render('3',False,'white'),small_font.render('2',False,'white')]
+    screen.blit(x,(1000,40))
+    screen.blit(x,(1000,100))
+    screen.blit(x,(1000,160))
+    screen.blit(x,(1000,220))
+    screen.blit(powers[0],(1018,39))
+    screen.blit(powers[1],(1018,99))
+    screen.blit(powers[2],(1018,159))
+
+    buttons= [Button(50,50,'gray',(1100,700))]
+    inputBoxes = [InputBox((920,60),'00'),InputBox((920,120),'00'),InputBox((920,180),'00'),InputBox((920,240),'00'),InputBox((920,300),'00')]
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+        mouse_pos = pygame.mouse.get_pos()
+        for i in range(len(buttons)):
+            screen.blit(buttons[i].surface,buttons[i].rect)
+            if buttons[i].rect.collidepoint(mouse_pos):
+                if pygame.mouse.get_pressed()[0]:
+                    print('plot')
+                    plot(inputBoxes)
+
+        for i in range(len(inputBoxes)):
+            screen.blit(inputBoxes[i].surface,inputBoxes[i].rect)
+            screen.blit(inputBoxes[i].text,inputBoxes[i].rect)
+            if inputBoxes[i].selected:
+                if inputBoxes[i].locked:
+                    inputBoxes[i].timer += 1
+                    if inputBoxes[i].timer == 10:
+                        inputBoxes[i].timer = 0
+                        inputBoxes[i].locked = False
+                #check for numerical and arithmetic key entries
+                else:
+                    if not inputBoxes[i].rect.collidepoint(mouse_pos):
+                        if pygame.mouse.get_pressed()[0]:
+                            inputBoxes[i].selected = False
+                    keys = pygame.key.get_pressed()
+                    if keys[pygame.K_0]:
+                        inputBoxes[i].add('0')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_1]:
+                        inputBoxes[i].add('1')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_2]:
+                        inputBoxes[i].add('2')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_3]:
+                        inputBoxes[i].add('3')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_4]:
+                        inputBoxes[i].add('4')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_5]:
+                        inputBoxes[i].add('5')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_6]:
+                        inputBoxes[i].add('6')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_7]:
+                        inputBoxes[i].add('7')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_8]:
+                        inputBoxes[i].add('8')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_9]:
+                        inputBoxes[i].add('9')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_PLUS]:
+                        inputBoxes[i].add('+')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_MINUS]:
+                        inputBoxes[i].add('-')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_ASTERISK]:
+                        inputBoxes[i].add('*')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_SLASH]:
+                        inputBoxes[i].add('/')
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_BACKSPACE]:
+                        inputBoxes[i].delete()
+                        inputBoxes[i].locked = True
+                    if keys[pygame.K_RETURN]:
+                        inputBoxes[i].calculate()
+                        inputBoxes[i].locked = True
+
+            else:
+                if inputBoxes[i].rect.collidepoint(mouse_pos):
+                    if pygame.mouse.get_pressed()[0]:
+                        inputBoxes[i].selected = True
+        pygame.display.update()
+        clock.tick(60)
+
+#function to render a polynomial graph
+def plot(inputBoxes):
+    newCanvas = pygame.Surface((798,798))
+    newCanvasRect = newCanvas.get_rect(center = (400,400))
+    screen.blit(newCanvas,newCanvasRect)
+    pygame.draw.line(screen,'white',(400,0),(400,800))
+    pygame.draw.line(screen,'white',(0,400),(800,400))
+
+    polynomial = Polynomial(inputBoxes[0].interpretedContents,inputBoxes[1].interpretedContents,inputBoxes[2].interpretedContents,inputBoxes[3].interpretedContents,inputBoxes[4].interpretedContents)
+    print(polynomial.a,polynomial.b,polynomial.c,polynomial.d,polynomial.e)
+    plotted = False
+    while not plotted:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+        
+        previous = polynomial.a*(-401)**4 + polynomial.b*(-401)**3 + polynomial.c*(-401)**2 + polynomial.d*(-401) + polynomial.e
+        for x in range(-400,400):
+            y = polynomial.a*(x**4) + polynomial.b*(x**3) + polynomial.c*(x**2) + polynomial.d*x + polynomial.e
+            print(x,previous,y)
+            print('')
+            pygame.draw.line(screen,'pink',(x-1+400,400-previous),(x+400,400-y))
+            previous = y
+        plotted = True
+
+        pygame.display.update()
+        clock.tick(60)
+    print(polynomial.a,polynomial.b,polynomial.c,polynomial.d,polynomial.e)
 
 mainMenu()
