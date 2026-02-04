@@ -121,22 +121,28 @@ class InputBox:
 #subclass for a square input box without borders
 class SquareInputBox(InputBox):
     def __init__(self,_center,_contents):
+        #inherits the functions of the inputBox class
         super().__init__(_center,_contents)
+        #override the surface and rectangle created by the superclass initialisation
         self.image = 'project\images\squareInputBox.png'
         self.surface = pygame.image.load(self.image)
         self.rect = self.surface.get_rect(center = self.center)
         screen.blit(self.surface,self.rect)
+        #change the attribute relating to the size capacity for text
         self.maxHeight = 70
 
 #class to hold all the data about a triangle: sides, angles, area, perimeter
 class Triangle:
     def __init__(self, _a, _b, _c, _A, _B, _C, _area, _perimeter):
+        #atributes to store sides a,b and c of the triangle
         self.a = Line(_a.interpretedContents)
         self.b = Line(_b.interpretedContents)
         self.c = Line(_c.interpretedContents)
+        #attributes to store angles A,B and C of the triangle
         self.A = _A
         self.B = _B
         self.C = _C
+        #attributes to store the area and perimeter of the triangle
         self.area = _area
         self.perimeter = _perimeter
 
@@ -167,20 +173,24 @@ class Image:
 #class to store the values of a line in a triangle
 class Line:
     def __init__(self,_length):
+        #attributes to store the length and angle of the line relative to the positive x axis
         self.length = _length
         self.angle = 0
         self.surface = None
         self.position = [100,400]
 
+    #method to progressively draw the line by repeatedly blitting a larger fraction fo the line each tick
     def drawLine(self,scale,progress):
         if self.surface == None:
             self.surface = pygame.Surface((1,1))
+        #assign the fraction of the line depending on the progress
         self.surface = pygame.Surface((self.length*scale*progress,1))
         self.surface.fill('white')
         screen.blit(self.surface,self.position)
         progress = progress + 0.02
         return progress
     
+    #method to move the line to its correct position
     def moveLine(self,end,progress):
         self.surface.fill('black')
         screen.blit(self.surface,self.position)
@@ -194,6 +204,7 @@ class Line:
 #class to store the values of a polynomial
 class Polynomial:
     def __init__(self, _a, _b, _c, _d, _e):
+        #attributes to store coefficients a,b,c,d and e of x^4, x^3, x^2 x and x^0 respectively
         self.a = _a
         self.b = _b
         self.c = _c
@@ -203,6 +214,7 @@ class Polynomial:
 #class to store the properties of complex numbers
 class ComplexNumber:
     def __init__(self):
+        #attributes to store the coefficients a and b of the real and imaginary components of the complex number respectively
         self.a = 0
         self.b = 0
         self.mod = 0
@@ -227,41 +239,53 @@ class ComplexNumber:
 #class to store the elements of a matrix
 class Matrix:
     def __init__(self,_m,_n,_a,_b,_c,_d,_e,_f,_g,_h,_i):
+        #attributes to store teh number of columns and rows
         self.m = _m
         self.n = _n
 
+    #setter for element a
     def setA(self,_a):
         self.a = _a
 
+    #setter for element b
     def setB(self,_b):
         self.b = _b
 
+    #setter for element c
     def setC(self,_c):
         self.c = _c
 
+    #setter for element d
     def setD(self,_d):
         self.d = _d
 
+    #setter for element e
     def setE(self,_e):
         self.e = _e
 
+    #setter for element f
     def setF(self,_f):
         self.f = _f
 
+    #setter for element g
     def setG(self,_g):
         self.g = _g
 
+    #setter for element h
     def setH(self,_h):
         self.h = _h
 
+    #setter for element i
     def setI(self,_i):
         self.i = _i
 
 #class to store the equation of a vector
 class Vector:
     def __init__(self,_a,_b,_c,_d,_colour):
+        #attributes to store elements a and b which correspond to the x and y values of the position vector
         self.a = _a
         self.b = _b
+        #attributes to store elements c and d which correspond to the x and y values of the direction vector
         self.c = _c
         self.d = _d
         self.colour = _colour
@@ -273,6 +297,7 @@ def mainMenu():
     #buttons = [Image('project\\images\options.png',(500,400)),Image('project\\images\modules.png',(600,400)),Image('project\\images\saves.png',(700,400))]
 
     while True:
+        #check for the user quitting the program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -285,6 +310,7 @@ def mainMenu():
             screen.blit(buttons[i].surface, buttons[i].rect)
             if buttons[i].rect.collidepoint((mouse_pos)):
                 if pygame.mouse.get_pressed()[0]:
+                    #match case to check which button in the buttons list the user has pressed
                     match i:
                         case 0:
                             print('options')
@@ -293,21 +319,26 @@ def mainMenu():
                         case 2:
                             print('saves')
 
+        #update the screen
         pygame.display.update()
         clock.tick(60)
 
 #procedure to display the modules menu
 def modules():
+    #fill the screen black to remove the previous screen
     screen.fill('black')
+    #matrix of buttons each corresponding to one module, and the last button directs the user back to the main menu
     buttons = [Button(100,250,'yellow',(300,200)),Button(100,250,'yellow',(600,200)),Button(100,250,'yellow',(900,200)),
                Button(100,250,'yellow',(300,400)),Button(100,250,'yellow',(600,400)),Button(100,250,'yellow',(900,400)),
                Button(100,250,'yellow',(300,600)),Button(100,250,'yellow',(600,600)),Button(100,250,'yellow',(900,600)),
                Image('project/images/back.png',(1000,700))]
     
+    #buffer time to prevent the user from instantly clicking on the module which lies in the same area as the button for modules from the main menu
     pygame.display.update()
     time.sleep(0.2)
 
     while True:
+        #check for the user quitting the program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -320,6 +351,7 @@ def modules():
             screen.blit(buttons[i].surface, buttons[i].rect)
             if buttons[i].rect.collidepoint((mouse_pos)):
                 if pygame.mouse.get_pressed()[0]:
+                    #match case to allow each button to direct the user to a different maths module
                     match i:
                         case 0:
                             triangle()
@@ -339,12 +371,16 @@ def modules():
 
 #function to take inputs for triangles
 def triangle():
+    #fill the screen black to remove the previous screen
     screen.fill('black')
     pygame.draw.line(screen,'cyan',(800,0),(800,800))
 
+    #a button to start the calculation and a button to go back to the modules page
     buttons= [Button(50,50,'gray',(875,750)),Image('project/images/back.png',(1100,750))]
+    #input boxes to take inputs for each of the attributes of the triangle
     inputBoxes = [InputBox((920,60),'00'),InputBox((920,120),'00'),InputBox((920,180),'00'),InputBox((920,240),'00'),InputBox((920,300),'00'),InputBox((920,360),'00'),InputBox((920,420),'00'),InputBox((920,480),'00')]
     while True:
+        #check for the user quitting the program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -671,6 +707,8 @@ def plot(inputBoxes):
         
         previous = polynomial.a*(-401)**4 + polynomial.b*(-401)**3 + polynomial.c*(-401)**2 + polynomial.d*(-401) + polynomial.e
         for x in range(-400,400):
+            time.sleep(0.001)
+            pygame.display.update()
             y = polynomial.a*(x**4) + polynomial.b*(x**3) + polynomial.c*(x**2) + polynomial.d*x + polynomial.e
             print(';',x,previous,y,';',x-1+400,400-previous)
             if (400-previous) <= 800 and (400-y) <= 800 and (400-previous) >= 0 and (400-y) >= 0:
