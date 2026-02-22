@@ -328,7 +328,7 @@ def modules():
     #fill the screen black to remove the previous screen
     screen.fill('black')
     #matrix of buttons each corresponding to one module, and the last button directs the user back to the main menu
-    buttons = [Button(100,250,'yellow',(300,200)),Button(100,250,'yellow',(600,200)),Button(100,250,'yellow',(900,200)),
+    buttons = [Image('project/images/new.pixil',(300,200)),Button(100,250,'yellow',(600,200)),Button(100,250,'yellow',(900,200)),
                Button(100,250,'yellow',(300,400)),Button(100,250,'yellow',(600,400)),Button(100,250,'yellow',(900,400)),
                Button(100,250,'yellow',(300,600)),Button(100,250,'yellow',(600,600)),Button(100,250,'yellow',(900,600)),
                Image('project/images/back.png',(1000,700))]
