@@ -192,11 +192,16 @@ class Line:
     
     #method to move the line to its correct position
     def moveLine(self,end,progress):
+        #remove the old render
         self.surface.fill('black')
+        #blit blank
         screen.blit(self.surface,self.position)
+        #update position
         self.position[0] = self.position[0]+ 0.02*(end[0]-100)
         self.position[1] = self.position[1]+ 0.02*(end[1]-400)
+        #update progress
         progress = progress + 0.02
+        #blit
         self.surface.fill('white')
         screen.blit(self.surface,self.position)
         return progress
@@ -313,7 +318,7 @@ def mainMenu():
                     #match case to check which button in the buttons list the user has pressed
                     match i:
                         case 0:
-                            print('options')
+                            settings()
                         case 1:
                             modules()
                         case 2:
@@ -328,9 +333,9 @@ def modules():
     #fill the screen black to remove the previous screen
     screen.fill('black')
     #matrix of buttons each corresponding to one module, and the last button directs the user back to the main menu
-    buttons = [Image('project/images/new.pixil',(300,200)),Button(100,250,'yellow',(600,200)),Button(100,250,'yellow',(900,200)),
-               Button(100,250,'yellow',(300,400)),Button(100,250,'yellow',(600,400)),Button(100,250,'yellow',(900,400)),
-               Button(100,250,'yellow',(300,600)),Button(100,250,'yellow',(600,600)),Button(100,250,'yellow',(900,600)),
+    buttons = [Image('project/images/triangle.png',(300,200)),Image('project/images/polynomial.png',(600,200)),Image('project/images/argand.png',(900,200)),
+               Image('project/images/matrix.png',(300,400)),Image('project/images/vector.png',(600,400)),Image('project/images/linear.png',(900,400)),
+               Image('project/images/unit.png',(300,600)),Image('project/images/blank.png',(600,600)),Image('project/images/blank.png',(900,600)),
                Image('project/images/back.png',(1000,700))]
     
     #buffer time to prevent the user from instantly clicking on the module which lies in the same area as the button for modules from the main menu
@@ -353,17 +358,59 @@ def modules():
                 if pygame.mouse.get_pressed()[0]:
                     #match case to allow each button to direct the user to a different maths module
                     match i:
+                        #if user clicks triangle module
                         case 0:
                             triangle()
+                        #if user clicks polynomial module
                         case 1:
                             polynomial()
+                        #if user clicks argand module
                         case 2:
                             argand()
+                        #if user clicks matrix module
                         case 3:
                             matrix()
+                        #if user clicks vectors module
                         case 4:
                             vectors()
+                        #if user clicks back
                         case 9:
+                            mainMenu()
+
+        pygame.display.update()
+        clock.tick(60)
+
+#procedure to display the settings menu
+def settings():
+    #fill the screen black to remove the previous screen
+    screen.fill('black')
+    #matrix of buttons each corresponding to one module, and the last button directs the user back to the main menu
+    buttons = [Image('project/images/back.png',(1000,700))]
+    
+    x = font.render('No settings available',False,'white')
+    screen.blit(x,(450,100))
+
+    #buffer time to prevent the user from instantly clicking on the module which lies in the same area as the button for modules from the main menu
+    pygame.display.update()
+    time.sleep(0.2)
+
+    while True:
+        #check for the user quitting the program
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+        #update surfaces
+        #check for mouse collisions and mouse presses
+        mouse_pos = pygame.mouse.get_pos()
+        for i in range(len(buttons)):
+            screen.blit(buttons[i].surface, buttons[i].rect)
+            if buttons[i].rect.collidepoint((mouse_pos)):
+                if pygame.mouse.get_pressed()[0]:
+                    #match case to allow each button to direct the user to a different maths module
+                    match i:
+                        case 0:
                             mainMenu()
 
         pygame.display.update()
@@ -393,91 +440,120 @@ def triangle():
             if buttons[i].rect.collidepoint(mouse_pos):
                 if pygame.mouse.get_pressed()[0]:
                     match i:
+                        #check for the user clicking to render the triangle
                         case 0:
+                            #list to track which data has been entered by the user
                             data = [False,False,False,False,False,False,False,False]
                             values = 0
+                            #update the data list according to user inputs
                             for i in range(len(inputBoxes)):
                                 if inputBoxes[i].interpretedContents != 0:
                                     data[i] = True
+                            #count the number of data items the user has inputted
                             for i in range(0,3):
                                 if data[i]:
                                     values = values + 1
+                            #decide wether or not the algorithm can be carried out based on the number of data items
                             if values == 3:
                                 drawTriangle(inputBoxes)
+                            #check for specific scenarios
                             elif values == 2:
                                 if data[7]:
                                     drawTriangle(inputBoxes)
                                 for i in range(0,3):
                                     if not data[i] and data[i+3]:
                                         drawTriangle(inputBoxes)
+                        #check for the user pressing the back button
                         case 1:
                             modules()
                                     
-
+        #check for user inputs in the input boxes
         for i in range(len(inputBoxes)):
+            #update the input boxes
             screen.blit(inputBoxes[i].surface,inputBoxes[i].rect)
             screen.blit(inputBoxes[i].text,inputBoxes[i].rect)
+            #check if the input box is already selected
             if inputBoxes[i].selected:
+                #check in the input box is currently locked
                 if inputBoxes[i].locked:
                     inputBoxes[i].timer += 1
+                    #if the input box is locked, update its timer
                     if inputBoxes[i].timer == 10:
                         inputBoxes[i].timer = 0
                         inputBoxes[i].locked = False
                 #check for numerical and arithmetic key entries
                 else:
+                    #check for the user clicking of the input box
                     if not inputBoxes[i].rect.collidepoint(mouse_pos):
                         if pygame.mouse.get_pressed()[0]:
                             inputBoxes[i].selected = False
+                    #store the user inputs in the keys list
                     keys = pygame.key.get_pressed()
+                    #if the user enters 0
                     if keys[pygame.K_0]:
                         inputBoxes[i].add('0')
                         inputBoxes[i].locked = True
+                    #if the user enters 1
                     if keys[pygame.K_1]:
                         inputBoxes[i].add('1')
                         inputBoxes[i].locked = True
+                    #if the user enters 2
                     if keys[pygame.K_2]:
                         inputBoxes[i].add('2')
                         inputBoxes[i].locked = True
+                    #if the user enters 3
                     if keys[pygame.K_3]:
                         inputBoxes[i].add('3')
                         inputBoxes[i].locked = True
+                    #if the user enters 4
                     if keys[pygame.K_4]:
                         inputBoxes[i].add('4')
                         inputBoxes[i].locked = True
+                    #if the user enters 5
                     if keys[pygame.K_5]:
                         inputBoxes[i].add('5')
                         inputBoxes[i].locked = True
+                    #if the user enters 6
                     if keys[pygame.K_6]:
                         inputBoxes[i].add('6')
                         inputBoxes[i].locked = True
+                    #if the user enters 7
                     if keys[pygame.K_7]:
                         inputBoxes[i].add('7')
                         inputBoxes[i].locked = True
+                    #if the user enters 8
                     if keys[pygame.K_8]:
                         inputBoxes[i].add('8')
                         inputBoxes[i].locked = True
+                    #if the user enters 9
                     if keys[pygame.K_9]:
                         inputBoxes[i].add('9')
                         inputBoxes[i].locked = True
+                    #if the user enters +
                     if keys[pygame.K_PLUS]:
                         inputBoxes[i].add('+')
                         inputBoxes[i].locked = True
+                    #if the user enters -
                     if keys[pygame.K_MINUS]:
                         inputBoxes[i].add('-')
                         inputBoxes[i].locked = True
+                    #if the user enters *
                     if keys[pygame.K_ASTERISK]:
                         inputBoxes[i].add('*')
                         inputBoxes[i].locked = True
+                    #if the user enters /
                     if keys[pygame.K_SLASH]:
                         inputBoxes[i].add('/')
                         inputBoxes[i].locked = True
+                    #if the user enters backspace key
                     if keys[pygame.K_BACKSPACE]:
                         inputBoxes[i].delete()
                         inputBoxes[i].locked = True
+                    #if the user enters return key
                     if keys[pygame.K_RETURN]:
                         inputBoxes[i].calculate()
                         inputBoxes[i].locked = True
-
+            #check if the user is clicking on to the input box
             else:
                 if inputBoxes[i].rect.collidepoint(mouse_pos):
                     if pygame.mouse.get_pressed()[0]:
@@ -488,30 +564,43 @@ def triangle():
 
 #function to draw a trianlge to the screen
 def drawTriangle(inputBoxes):
+    #blit a new object to clear the screen of previous renders
     newCanvas = pygame.Surface((798,798))
     newCanvasRect = newCanvas.get_rect(center = (400,400))
     screen.blit(newCanvas,newCanvasRect)
+    #instantiate triangle object with the inputted values passed in as arguments
     triangle = Triangle(inputBoxes[0],inputBoxes[1],inputBoxes[2],inputBoxes[3],inputBoxes[4],inputBoxes[5],inputBoxes[6],inputBoxes[7])
+    #variable to track the number of lines rendered
     lineNum = 1
+    #variable to track the progress of the rendering of a single line
     progress = 0
+    #variables to track if a line is finishd
     drawn = False
     positioned = False
-    scale = 600/triangle.a.length
+    #variable to store the scale that the triangle will be timesed by to fill the screen
+    scale = 1
+    if triangle.a.length != 0:
+        scale = 600/triangle.a.length
     print(f'scale: {scale}')
+    #loop to animately draw the line
     while not drawn and not positioned:
+        #check for the user quitting the program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
         match lineNum:
+            #check which line is being rendered
             case 1:
                 if not drawn:
                     print(progress)
+                    #use the triangle method draw line to draw the line at the level of progress denoted
                     progress = triangle.a.drawLine(scale,progress)
                     if progress > 1:
                         drawn = True
                         progress = 0
                 elif not positioned:
+                    #use the triangle method move line to move the line at the level of progress denoted
                     print(progress)
                     progress = triangle.a.moveLine([100,600],progress)
                     if progress > 1:
@@ -583,313 +672,444 @@ def length(a,b,c,A,B,C):
 
 #function to take inputs for a polynomial
 def polynomial():
+    #fill the screen black to clear previous renders
     screen.fill('black')
+    #draw graph axes
     pygame.draw.line(screen,'cyan',(800,0),(800,800))
     pygame.draw.line(screen,'white',(400,0),(400,800))
     pygame.draw.line(screen,'white',(0,400),(800,400))
     x = font.render('x',False,'white')
+    #add text to show polynomial terms
     powers = [small_font.render('4',False,'white'),small_font.render('3',False,'white'),small_font.render('2',False,'white')]
     screen.blit(x,(1000,40))
     screen.blit(x,(1000,100))
     screen.blit(x,(1000,160))
     screen.blit(x,(1000,220))
+    #blit terms
     screen.blit(powers[0],(1018,39))
     screen.blit(powers[1],(1018,99))
     screen.blit(powers[2],(1018,159))
 
+    #lists to store the button and inputbox objects
     buttons= [Button(50,50,'gray',(875,750)),Image('project/images/back.png',(1100,750))]
     inputBoxes = [InputBox((920,60),'00'),InputBox((920,120),'00'),InputBox((920,180),'00'),InputBox((920,240),'00'),InputBox((920,300),'00')]
     while True:
+        #check for the user quitting the program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
 
+        #check the mouse position to check against buttons
         mouse_pos = pygame.mouse.get_pos()
+        #update buttons and check if they are being pressed
         for i in range(len(buttons)):
             screen.blit(buttons[i].surface,buttons[i].rect)
             if buttons[i].rect.collidepoint(mouse_pos):
                 if pygame.mouse.get_pressed()[0]:
                     match i:
+                        #check if the user pressed render
                         case 0:
-                            print('plot')
                             plot(inputBoxes)
+                        #check if the user pressed back
                         case 1:
                             modules()
 
+        #check for user inputs in the input boxes
         for i in range(len(inputBoxes)):
+            #update the input boxes
             screen.blit(inputBoxes[i].surface,inputBoxes[i].rect)
             screen.blit(inputBoxes[i].text,inputBoxes[i].rect)
+            #check if the input box is already selected
             if inputBoxes[i].selected:
+                #check in the input box is currently locked
                 if inputBoxes[i].locked:
                     inputBoxes[i].timer += 1
+                    #if the input box is locked, update its timer
                     if inputBoxes[i].timer == 10:
                         inputBoxes[i].timer = 0
                         inputBoxes[i].locked = False
                 #check for numerical and arithmetic key entries
                 else:
+                    #check for the user clicking of the input box
                     if not inputBoxes[i].rect.collidepoint(mouse_pos):
                         if pygame.mouse.get_pressed()[0]:
                             inputBoxes[i].selected = False
+                    #store the user inputs in the keys list
                     keys = pygame.key.get_pressed()
+                    #if the user enters 0
                     if keys[pygame.K_0]:
                         inputBoxes[i].add('0')
                         inputBoxes[i].locked = True
+                    #if the user enters 1
                     if keys[pygame.K_1]:
                         inputBoxes[i].add('1')
                         inputBoxes[i].locked = True
+                    #if the user enters 2
                     if keys[pygame.K_2]:
                         inputBoxes[i].add('2')
                         inputBoxes[i].locked = True
+                    #if the user enters 3
                     if keys[pygame.K_3]:
                         inputBoxes[i].add('3')
                         inputBoxes[i].locked = True
+                    #if the user enters 4
                     if keys[pygame.K_4]:
                         inputBoxes[i].add('4')
                         inputBoxes[i].locked = True
+                    #if the user enters 5
                     if keys[pygame.K_5]:
                         inputBoxes[i].add('5')
                         inputBoxes[i].locked = True
+                    #if the user enters 6
                     if keys[pygame.K_6]:
                         inputBoxes[i].add('6')
                         inputBoxes[i].locked = True
+                    #if the user enters 7
                     if keys[pygame.K_7]:
                         inputBoxes[i].add('7')
                         inputBoxes[i].locked = True
+                    #if the user enters 8
                     if keys[pygame.K_8]:
                         inputBoxes[i].add('8')
                         inputBoxes[i].locked = True
+                    #if the user enters 9
                     if keys[pygame.K_9]:
                         inputBoxes[i].add('9')
                         inputBoxes[i].locked = True
+                    #if the user enters +
                     if keys[pygame.K_PLUS]:
                         inputBoxes[i].add('+')
                         inputBoxes[i].locked = True
+                    #if the user enters -
                     if keys[pygame.K_MINUS]:
                         inputBoxes[i].add('-')
                         inputBoxes[i].locked = True
+                    #if the user enters *
                     if keys[pygame.K_ASTERISK]:
                         inputBoxes[i].add('*')
                         inputBoxes[i].locked = True
+                    #if the user enters /
                     if keys[pygame.K_SLASH]:
                         inputBoxes[i].add('/')
                         inputBoxes[i].locked = True
+                    #if the user enters backspace key
                     if keys[pygame.K_BACKSPACE]:
                         inputBoxes[i].delete()
                         inputBoxes[i].locked = True
+                    #if the user enters return key
                     if keys[pygame.K_RETURN]:
                         inputBoxes[i].calculate()
                         inputBoxes[i].locked = True
-
+            #check if the user is clicking on to the input box
             else:
                 if inputBoxes[i].rect.collidepoint(mouse_pos):
                     if pygame.mouse.get_pressed()[0]:
                         inputBoxes[i].selected = True
+
         pygame.display.update()
         clock.tick(60)
 
 #function to render a polynomial graph
 def plot(inputBoxes):
+    #fill the graph black to remove previous renders
     newCanvas = pygame.Surface((798,798))
     newCanvasRect = newCanvas.get_rect(center = (400,400))
     screen.blit(newCanvas,newCanvasRect)
+    #redraw the axes
     pygame.draw.line(screen,'white',(400,0),(400,800))
     pygame.draw.line(screen,'white',(0,400),(800,400))
 
+    #instantiate polynomial object using inputs passed in
     polynomial = Polynomial(inputBoxes[0].interpretedContents,inputBoxes[1].interpretedContents,inputBoxes[2].interpretedContents,inputBoxes[3].interpretedContents,inputBoxes[4].interpretedContents)
-    print(polynomial.a,polynomial.b,polynomial.c,polynomial.d,polynomial.e)
+    #check if the polynomial is degree 4
+    if polynomial.a == 0:
+        #check if the polynomial is degree 3
+        if polynomial.b == 0:
+            #check if the polynomial is degree 2
+            if polynomial.c == 0:
+                #check if the polynomial is degree 1
+                if polynomial.d == 0:
+                    #no solutions for x
+                    x1 = False
+                    x2 = False
+                    x3 = False
+                    x4 = False
+                else:
+                    #use x = -y/m
+                    x1 = -(polynomial.e)/(polynomial.d)
+                    x2 = False
+                    x3 = False
+                    x4 = False
+            else:
+                #use quadratic formula to find 2 solutions for x
+                x1 = (-(polynomial.d)+math.sqrt((polynomial.d)**2-4*polynomial.c*polynomial.e))/(2*polynomial.c)
+                x2 = (-(polynomial.d)-math.sqrt((polynomial.d)**2-4*polynomial.c*polynomial.e))/(2*polynomial.c)
+                x3 = False
+                x4 = False
+    #y intercept is always e coefficient
+    y1 = polynomial.e
+
+    #variable to track wether or not the render is finished
     plotted = False
     while not plotted:
+        #check for the user quitting the program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
         
+        #variable to store the value of y for the previous value of x
         previous = polynomial.a*(-401)**4 + polynomial.b*(-401)**3 + polynomial.c*(-401)**2 + polynomial.d*(-401) + polynomial.e
+        #for loop which draws a straight line between the previous and current point on the graph
         for x in range(-400,400):
             time.sleep(0.001)
             pygame.display.update()
+            #calculate new value for y
             y = polynomial.a*(x**4) + polynomial.b*(x**3) + polynomial.c*(x**2) + polynomial.d*x + polynomial.e
-            print(';',x,previous,y,';',x-1+400,400-previous)
+            #range check to prevent errors by rendering off screen
             if (400-previous) <= 800 and (400-y) <= 800 and (400-previous) >= 0 and (400-y) >= 0:
                 pygame.draw.line(screen,'pink',((x-1+400),(400-previous)),((x+400),(400-y)))
-            
+            #update the previous variable
             previous = y
+        #update plotted variable
         plotted = True
-
+        #print intercepts if existant
+        if x1 != False:
+            print('('+str(x1)+',0)')
+        if x2 != False:
+            print('('+str(x2)+',0)')
+        print('(0,'+str(y1)+')')
         pygame.display.update()
         clock.tick(60)
-    print(polynomial.a,polynomial.b,polynomial.c,polynomial.d,polynomial.e)
 
 #function to plot argand diagrams
 def argand():
+    #fill the screen black to remove previous images
     screen.fill('black')
+    #draw graph axes
     pygame.draw.line(screen,'cyan',(800,0),(800,800))
     pygame.draw.line(screen,'white',(400,0),(400,800))
     pygame.draw.line(screen,'white',(0,400),(800,400))
+    #render complex number shell
     screen.blit(font.render('+',False,'white'),(1000,40))
     screen.blit(font.render(' i',False,'white'),(1000,100))
     screen.blit(font.render('= modulus',False,'white'),(1000,160))
     screen.blit(font.render('= argument',False,'white'),(1000,220))
 
+    #lists to store the button and input box objects
     buttons= [Button(50,50,'gray',(875,750)),Image('project/images/back.png',(1100,750))]
     inputBoxes = [InputBox((920,60),'00'),InputBox((920,120),'00'),InputBox((920,180),'00'),InputBox((920,240),'00')]
     while True:
+        #check for the user quitting the program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
 
+        #take the mouse position to check against the buttons
         mouse_pos = pygame.mouse.get_pos()
         for i in range(len(buttons)):
             screen.blit(buttons[i].surface,buttons[i].rect)
             if buttons[i].rect.collidepoint(mouse_pos):
                 if pygame.mouse.get_pressed()[0]:
                     match i:
+                        #check if the user is clicking render
                         case 0:
                             plotI(inputBoxes)
+                        #check if the user is clicking back
                         case 1:
                             modules()
 
+        #check for user inputs in the input boxes
         for i in range(len(inputBoxes)):
+            #update the input boxes
             screen.blit(inputBoxes[i].surface,inputBoxes[i].rect)
             screen.blit(inputBoxes[i].text,inputBoxes[i].rect)
+            #check if the input box is already selected
             if inputBoxes[i].selected:
+                #check in the input box is currently locked
                 if inputBoxes[i].locked:
                     inputBoxes[i].timer += 1
+                    #if the input box is locked, update its timer
                     if inputBoxes[i].timer == 10:
                         inputBoxes[i].timer = 0
                         inputBoxes[i].locked = False
                 #check for numerical and arithmetic key entries
                 else:
+                    #check for the user clicking of the input box
                     if not inputBoxes[i].rect.collidepoint(mouse_pos):
                         if pygame.mouse.get_pressed()[0]:
                             inputBoxes[i].selected = False
+                    #store the user inputs in the keys list
                     keys = pygame.key.get_pressed()
+                    #if the user enters 0
                     if keys[pygame.K_0]:
                         inputBoxes[i].add('0')
                         inputBoxes[i].locked = True
+                    #if the user enters 1
                     if keys[pygame.K_1]:
                         inputBoxes[i].add('1')
                         inputBoxes[i].locked = True
+                    #if the user enters 2
                     if keys[pygame.K_2]:
                         inputBoxes[i].add('2')
                         inputBoxes[i].locked = True
+                    #if the user enters 3
                     if keys[pygame.K_3]:
                         inputBoxes[i].add('3')
                         inputBoxes[i].locked = True
+                    #if the user enters 4
                     if keys[pygame.K_4]:
                         inputBoxes[i].add('4')
                         inputBoxes[i].locked = True
+                    #if the user enters 5
                     if keys[pygame.K_5]:
                         inputBoxes[i].add('5')
                         inputBoxes[i].locked = True
+                    #if the user enters 6
                     if keys[pygame.K_6]:
                         inputBoxes[i].add('6')
                         inputBoxes[i].locked = True
+                    #if the user enters 7
                     if keys[pygame.K_7]:
                         inputBoxes[i].add('7')
                         inputBoxes[i].locked = True
+                    #if the user enters 8
                     if keys[pygame.K_8]:
                         inputBoxes[i].add('8')
                         inputBoxes[i].locked = True
+                    #if the user enters 9
                     if keys[pygame.K_9]:
                         inputBoxes[i].add('9')
                         inputBoxes[i].locked = True
+                    #if the user enters +
                     if keys[pygame.K_PLUS]:
                         inputBoxes[i].add('+')
                         inputBoxes[i].locked = True
+                    #if the user enters -
                     if keys[pygame.K_MINUS]:
                         inputBoxes[i].add('-')
                         inputBoxes[i].locked = True
+                    #if the user enters *
                     if keys[pygame.K_ASTERISK]:
                         inputBoxes[i].add('*')
                         inputBoxes[i].locked = True
+                    #if the user enters /
                     if keys[pygame.K_SLASH]:
                         inputBoxes[i].add('/')
                         inputBoxes[i].locked = True
+                    #if the user enters backspace key
                     if keys[pygame.K_BACKSPACE]:
                         inputBoxes[i].delete()
                         inputBoxes[i].locked = True
+                    #if the user enters return key
                     if keys[pygame.K_RETURN]:
                         inputBoxes[i].calculate()
                         inputBoxes[i].locked = True
-
+            #check if the user is clicking on to the input box
             else:
                 if inputBoxes[i].rect.collidepoint(mouse_pos):
                     if pygame.mouse.get_pressed()[0]:
                         inputBoxes[i].selected = True
+
         pygame.display.update()
         clock.tick(60)
 
 #function to plot complex numbers
 def plotI(inputBoxes):
+    #blit the screen black to remove previous renders
     newCanvas = pygame.Surface((798,798))
     newCanvasRect = newCanvas.get_rect(center = (400,400))
     screen.blit(newCanvas,newCanvasRect)
+    #draw the graph axes again
     pygame.draw.line(screen,'white',(400,0),(400,800))
     pygame.draw.line(screen,'white',(0,400),(800,400))
 
+    #instantiate the complex number object and set its attributes (I used setters instead of assigning on instatiation as it is unknown which values the user will enter)
     complexNumber = ComplexNumber()
+    #set a
     complexNumber.set_a(inputBoxes[0].interpretedContents)
+    #set b
     complexNumber.set_b(inputBoxes[1].interpretedContents)
+    #set mod
     complexNumber.set_mod(inputBoxes[2].interpretedContents)
+    #set arg
     complexNumber.set_arg(inputBoxes[3].interpretedContents)
 
     #algorithm to calculate the missing attributes of the complex number object
+    #check if the user entered the full cartesian form
     if complexNumber.a != 0 and complexNumber.b != 0:
-        print('ab')
         if complexNumber.a > 0:
+            #if the number is in the first quadrant
             if complexNumber.b > 0:
                 complexNumber.arg = math.atan(complexNumber.b/complexNumber.a)
+            #if the number is in the fourth quadrant
             else:
-                complexNumber.arg = math.pi - math.atan(complexNumber.b/complexNumber.a)
+                complexNumber.arg = math.atan(complexNumber.b/complexNumber.a)
         else:
+            #if the number is in the second quadrant
             if complexNumber.b > 0:
                 complexNumber.arg = 0 - math.atan(complexNumber.b/complexNumber.a)
+            #if the number is in the third quadrant
             else:
                 complexNumber.arg = math.atan(complexNumber.b/complexNumber.a) - math.pi
+    #if the user entered half cartesian and half modarg
     elif complexNumber.a != 0 and complexNumber.arg != 0:
-        print('aarg')
         if complexNumber.arg > 0:
+            #if the number is in the second quadrant
             if complexNumber.arg > (math.pi/2):
                 complexNumber.b = (complexNumber.a/math.tan(complexNumber.arg-math.pi/2))
+            #if the number is in the first quadrant
             else:
                 complexNumber.b = (complexNumber.a*math.tan(complexNumber.arg))
         else:
+            #if the number is in the third quadrant
             if complexNumber.arg < (0-math.pi/2):
                 complexNumber.b = (complexNumber.a/math.tan(0-complexNumber.arg-math.pi/2))
+            #if the number is in the fourth quadrant
             else:
                 complexNumber.b = (complexNumber.a*math.tan(0-complexNumber.arg))
+    #if the user entered half cartesian and half modarg
     elif complexNumber.b != 0 and complexNumber.arg != 0:
-        print('barg')
         if complexNumber.arg > 0:
+            #if the number is in the second quadrant
             if complexNumber.arg > (math.pi/2):
                 complexNumber.a = (complexNumber.b*math.tan(complexNumber.arg-math.pi/2))
+            #if the number is in the first quadrant
             else:
                 complexNumber.a = (complexNumber.b/math.tan(complexNumber.arg))
         else:
+            #if the number is in the third quadrant
             if complexNumber.arg < (0-math.pi/2):
                 complexNumber.a = (complexNumber.b*math.tan(0-complexNumber.arg-math.pi/2))
+            #if the number is in the fourth quadrant
             else:
                 complexNumber.a = (complexNumber.b/math.tan(0-complexNumber.arg))
+    #if the user entered modarg form
     elif complexNumber.mod != 0 and complexNumber.arg != 0:
-        print('modarg')
         if complexNumber.arg > 0:
+            #if the number is in the second quadrant
             if complexNumber.arg > (math.pi/2):
                 complexNumber.a = (complexNumber.mod*math.sin(complexNumber.arg-math.pi/2))
+            #if the number is in the first quadrant
             else:
                 complexNumber.a = (complexNumber.mod*math.cos(complexNumber.arg))
         else:
+            #if the number is in the third quadrant
             if complexNumber.arg < (0-math.pi/2):
                 complexNumber.a = (complexNumber.mod*math.sin(0-complexNumber.arg-math.pi/2))
+            #if the number is in the fourth quadrant
             else:
                 complexNumber.a = (complexNumber.mod*math.cos(0-complexNumber.arg))
-        print(complexNumber.a,complexNumber.b,complexNumber.mod,complexNumber.arg)
+
+        #calculate b with pythagoras
         complexNumber.b = math.sqrt(complexNumber.mod**2-complexNumber.a**2)
+    #calculate mod with pythagoras
     complexNumber.mod = math.sqrt(complexNumber.a**2+complexNumber.b**2)
 
     attributes = [complexNumber.a,complexNumber.b,complexNumber.mod,complexNumber.arg]
+    #refresh input boxes with complete values
     for i in range(0,4):
         inputBoxes[i].interpretedContents = attributes[i]
         inputBoxes[i].contents = str(round(attributes[i],4))
@@ -898,8 +1118,9 @@ def plotI(inputBoxes):
         inputBoxes[i].surface = pygame.image.load('project\images\inputBox.png')
         inputBoxes[i].text = font.render(inputBoxes[i].contents,False,'white')
 
-    print(complexNumber.a,complexNumber.b,complexNumber.mod,complexNumber.arg)
+    #draw the modules from the origin to the number
     pygame.draw.line(screen,'white',(400,400),(400+complexNumber.a,400-complexNumber.b))
+    #draw the angle
     angleRect = pygame.Rect(370,370,60,60)
     pygame.draw.arc(screen,'white',angleRect,0,complexNumber.arg)
     pygame.display.update()
@@ -931,97 +1152,125 @@ def matrix():
     pygame.draw.line(screen,'white',(480,440),(560,440))
     pygame.draw.line(screen,'white',(480,540),(560,540))
 
+    #lists to store the button and input box objects
     buttons= [Button(50,150,'gray',(900,100)),Button(50,50,'gray',(1010,100)),Button(50,50,'gray',(1070,100)),Button(50,150,'gray',(900,200)),Button(50,50,'gray',(1010,200)),Button(50,50,'gray',(1070,200)),Button(50,150,'gray',(900,600)),Button(50,150,'gray',(900,700)),Image('project/images/back.png',(1100,750))]
     inputBoxes = [SquareInputBox((280,312),''),SquareInputBox((400,312),''),SquareInputBox((520,312),''),
                   SquareInputBox((280,412),''),SquareInputBox((400,412),''),SquareInputBox((520,412),''),
                   SquareInputBox((280,512),''),SquareInputBox((400,512),''),SquareInputBox((520,512),'')]
 
     while True:
+        #check for the user quitting the program
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
 
+        #get mouse position to check agains buttons
         mouse_pos = pygame.mouse.get_pos()
         for i in range(len(buttons)):
             screen.blit(buttons[i].surface,buttons[i].rect)
             if buttons[i].rect.collidepoint(mouse_pos):
                 if pygame.mouse.get_pressed()[0]:
                     match i:
+                        #if the user clicks render
                         case 0:
                             plot(inputBoxes)
+                        #if the user clicks back
                         case 8:
                             modules()
 
+        #check for user inputs in the input boxes
         for i in range(len(inputBoxes)):
+            #update the input boxes
             screen.blit(inputBoxes[i].surface,inputBoxes[i].rect)
             screen.blit(inputBoxes[i].text,inputBoxes[i].rect)
+            #check if the input box is already selected
             if inputBoxes[i].selected:
+                #check in the input box is currently locked
                 if inputBoxes[i].locked:
                     inputBoxes[i].timer += 1
+                    #if the input box is locked, update its timer
                     if inputBoxes[i].timer == 10:
                         inputBoxes[i].timer = 0
                         inputBoxes[i].locked = False
-                        
                 #check for numerical and arithmetic key entries
                 else:
+                    #check for the user clicking of the input box
                     if not inputBoxes[i].rect.collidepoint(mouse_pos):
                         if pygame.mouse.get_pressed()[0]:
                             inputBoxes[i].selected = False
+                    #store the user inputs in the keys list
                     keys = pygame.key.get_pressed()
+                    #if the user enters 0
                     if keys[pygame.K_0]:
                         inputBoxes[i].add('0')
                         inputBoxes[i].locked = True
+                    #if the user enters 1
                     if keys[pygame.K_1]:
                         inputBoxes[i].add('1')
                         inputBoxes[i].locked = True
+                    #if the user enters 2
                     if keys[pygame.K_2]:
                         inputBoxes[i].add('2')
                         inputBoxes[i].locked = True
+                    #if the user enters 3
                     if keys[pygame.K_3]:
                         inputBoxes[i].add('3')
                         inputBoxes[i].locked = True
+                    #if the user enters 4
                     if keys[pygame.K_4]:
                         inputBoxes[i].add('4')
                         inputBoxes[i].locked = True
+                    #if the user enters 5
                     if keys[pygame.K_5]:
                         inputBoxes[i].add('5')
                         inputBoxes[i].locked = True
+                    #if the user enters 6
                     if keys[pygame.K_6]:
                         inputBoxes[i].add('6')
                         inputBoxes[i].locked = True
+                    #if the user enters 7
                     if keys[pygame.K_7]:
                         inputBoxes[i].add('7')
                         inputBoxes[i].locked = True
+                    #if the user enters 8
                     if keys[pygame.K_8]:
                         inputBoxes[i].add('8')
                         inputBoxes[i].locked = True
+                    #if the user enters 9
                     if keys[pygame.K_9]:
                         inputBoxes[i].add('9')
                         inputBoxes[i].locked = True
+                    #if the user enters +
                     if keys[pygame.K_PLUS]:
                         inputBoxes[i].add('+')
                         inputBoxes[i].locked = True
+                    #if the user enters -
                     if keys[pygame.K_MINUS]:
                         inputBoxes[i].add('-')
                         inputBoxes[i].locked = True
+                    #if the user enters *
                     if keys[pygame.K_ASTERISK]:
                         inputBoxes[i].add('*')
                         inputBoxes[i].locked = True
+                    #if the user enters /
                     if keys[pygame.K_SLASH]:
                         inputBoxes[i].add('/')
                         inputBoxes[i].locked = True
+                    #if the user enters backspace key
                     if keys[pygame.K_BACKSPACE]:
                         inputBoxes[i].delete()
                         inputBoxes[i].locked = True
+                    #if the user enters return key
                     if keys[pygame.K_RETURN]:
                         inputBoxes[i].calculate()
                         inputBoxes[i].locked = True
-
+            #check if the user is clicking on to the input box
             else:
                 if inputBoxes[i].rect.collidepoint(mouse_pos):
                     if pygame.mouse.get_pressed()[0]:
                         inputBoxes[i].selected = True
+
         pygame.display.update()
         clock.tick(60)
 
@@ -1036,15 +1285,19 @@ def vectors():
     #addition sign
     x = font.render('+',False,'white')
     #shell for vector a
+    #left side of position vector
     pygame.draw.line(screen,'white',(860,50),(850,70))
     pygame.draw.line(screen,'white',(850,70),(850,160))
     pygame.draw.line(screen,'white',(850,160),(860,180))
+    #right side of position vector
     pygame.draw.line(screen,'white',(940,50),(950,70))
     pygame.draw.line(screen,'white',(950,70),(950,160))
     pygame.draw.line(screen,'white',(950,160),(940,180))
+    #left side of direction vector
     pygame.draw.line(screen,'white',(1060,50),(1050,70))
     pygame.draw.line(screen,'white',(1050,70),(1050,160))
     pygame.draw.line(screen,'white',(1050,160),(1060,180))
+    #right side of direction vector
     pygame.draw.line(screen,'white',(1140,50),(1150,70))
     pygame.draw.line(screen,'white',(1150,70),(1150,160))
     pygame.draw.line(screen,'white',(1150,160),(1140,180))
@@ -1052,26 +1305,33 @@ def vectors():
     screen.blit(x,(975,90))
 
     #shell for vector b
+    #left side of position vector
     pygame.draw.line(screen,'white',(860,230),(850,250))
     pygame.draw.line(screen,'white',(850,250),(850,340))
     pygame.draw.line(screen,'white',(850,340),(860,360))
+    #right side of position vector
     pygame.draw.line(screen,'white',(940,230),(950,250))
     pygame.draw.line(screen,'white',(950,250),(950,340))
     pygame.draw.line(screen,'white',(950,340),(940,360))
+    #left side of direction vector
     pygame.draw.line(screen,'white',(1060,230),(1050,250))
     pygame.draw.line(screen,'white',(1050,250),(1050,340))
     pygame.draw.line(screen,'white',(1050,340),(1060,360))
+    #right side of direction vector
     pygame.draw.line(screen,'white',(1140,230),(1150,250))
     pygame.draw.line(screen,'white',(1150,250),(1150,340))
     pygame.draw.line(screen,'white',(1150,340),(1140,360))
+    #render lambdas
     lambda2Rect = lambdaImage.get_rect(center = (1020,290))
     screen.blit(x,(975,270))
 
-    buttons= [Button(50,50,'gray',(1020,700))]
+    #lists to store the button and input box objects
+    buttons= [Button(50,50,'gray',(1020,700)),Image('project/images/back.png',(1100,750))]
     inputBoxes = [SquareInputBox((900,100),'00'),SquareInputBox((900,150),'00'),SquareInputBox((1100,100),'00'),SquareInputBox((1100,150),'00'),
                   SquareInputBox((900,280),'00'),SquareInputBox((900,330),'00'),SquareInputBox((1100,280),'00'),SquareInputBox((1100,330),'00')]
     
     while True:
+        #check for the user quitting the programe
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -1087,78 +1347,105 @@ def vectors():
             screen.blit(buttons[i].surface,buttons[i].rect)
             if buttons[i].rect.collidepoint(mouse_pos):
                 if pygame.mouse.get_pressed()[0]:
-                    print('plot')
-                    plotI(inputBoxes)
+                    match i:
+                        case 0:
+                            print('plot')
+                            plotI(inputBoxes)
+                        case 1:
+                            modules()
 
-        #for each input box, check if the conditions are met and check for user inputs
+        #check for user inputs in the input boxes
         for i in range(len(inputBoxes)):
+            #update the input boxes
             screen.blit(inputBoxes[i].surface,inputBoxes[i].rect)
             screen.blit(inputBoxes[i].text,inputBoxes[i].rect)
+            #check if the input box is already selected
             if inputBoxes[i].selected:
+                #check in the input box is currently locked
                 if inputBoxes[i].locked:
                     inputBoxes[i].timer += 1
+                    #if the input box is locked, update its timer
                     if inputBoxes[i].timer == 10:
                         inputBoxes[i].timer = 0
                         inputBoxes[i].locked = False
                 #check for numerical and arithmetic key entries
                 else:
+                    #check for the user clicking of the input box
                     if not inputBoxes[i].rect.collidepoint(mouse_pos):
                         if pygame.mouse.get_pressed()[0]:
                             inputBoxes[i].selected = False
+                    #store the user inputs in the keys list
                     keys = pygame.key.get_pressed()
+                    #if the user enters 0
                     if keys[pygame.K_0]:
                         inputBoxes[i].add('0')
                         inputBoxes[i].locked = True
+                    #if the user enters 1
                     if keys[pygame.K_1]:
                         inputBoxes[i].add('1')
                         inputBoxes[i].locked = True
+                    #if the user enters 2
                     if keys[pygame.K_2]:
                         inputBoxes[i].add('2')
                         inputBoxes[i].locked = True
+                    #if the user enters 3
                     if keys[pygame.K_3]:
                         inputBoxes[i].add('3')
                         inputBoxes[i].locked = True
+                    #if the user enters 4
                     if keys[pygame.K_4]:
                         inputBoxes[i].add('4')
                         inputBoxes[i].locked = True
+                    #if the user enters 5
                     if keys[pygame.K_5]:
                         inputBoxes[i].add('5')
                         inputBoxes[i].locked = True
+                    #if the user enters 6
                     if keys[pygame.K_6]:
                         inputBoxes[i].add('6')
                         inputBoxes[i].locked = True
+                    #if the user enters 7
                     if keys[pygame.K_7]:
                         inputBoxes[i].add('7')
                         inputBoxes[i].locked = True
+                    #if the user enters 8
                     if keys[pygame.K_8]:
                         inputBoxes[i].add('8')
                         inputBoxes[i].locked = True
+                    #if the user enters 9
                     if keys[pygame.K_9]:
                         inputBoxes[i].add('9')
                         inputBoxes[i].locked = True
+                    #if the user enters +
                     if keys[pygame.K_PLUS]:
                         inputBoxes[i].add('+')
                         inputBoxes[i].locked = True
+                    #if the user enters -
                     if keys[pygame.K_MINUS]:
                         inputBoxes[i].add('-')
                         inputBoxes[i].locked = True
+                    #if the user enters *
                     if keys[pygame.K_ASTERISK]:
                         inputBoxes[i].add('*')
                         inputBoxes[i].locked = True
+                    #if the user enters /
                     if keys[pygame.K_SLASH]:
                         inputBoxes[i].add('/')
                         inputBoxes[i].locked = True
+                    #if the user enters backspace key
                     if keys[pygame.K_BACKSPACE]:
                         inputBoxes[i].delete()
                         inputBoxes[i].locked = True
+                    #if the user enters return key
                     if keys[pygame.K_RETURN]:
                         inputBoxes[i].calculate()
                         inputBoxes[i].locked = True
-
+            #check if the user is clicking on to the input box
             else:
                 if inputBoxes[i].rect.collidepoint(mouse_pos):
                     if pygame.mouse.get_pressed()[0]:
                         inputBoxes[i].selected = True
+
         pygame.display.update()
         clock.tick(60)
 
@@ -1169,6 +1456,5 @@ def vectorRender(inputBoxes):
     screen.blit(newCanvas,newCanvasRect)
     pygame.draw.line(screen,'white',(400,0),(400,800))
     pygame.draw.line(screen,'white',(0,400),(800,400))
-
 
 mainMenu()
